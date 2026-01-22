@@ -1,3 +1,2 @@
 sources:
-  - filename: sonic-workspace-6.5.5.tar.gz
-    sha1: e9229fb7383e9ca09ec46a2338e74a8d765ed697
+  sonic-workspace-6.5.5.tar.gz: e9229fb7383e9ca09ec46a2338e74a8d765ed697
