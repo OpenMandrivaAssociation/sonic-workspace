@@ -144,6 +144,7 @@ BuildRequires: gettext
 # Both Plasma 5 and Plasma 6 provide
 # cmake(KPipeWire), cmake(KSysGuard) and friends
 BuildRequires: cmake(KPipeWire) >= 5.27.80
+BuildRequires: kwin
 BuildRequires: kwin-devel
 BuildRequires: cmake(KWinDBusInterface) >= 5.27.80
 BuildRequires: cmake(KSysGuard) >= 5.27.80
