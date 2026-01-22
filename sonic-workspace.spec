@@ -228,7 +228,7 @@ Development files for the KDE Plasma workspace.
 %package x11
 Summary: X11 support for Sonic Desktop Workspace
 Group: Graphical desktop/KDE
-Provides: %{name}-11 = %{EVRD}
+Provides: %{name}-x11 = %{EVRD}
 # needed if anything will fail on startkde
 Requires: xmessage
 Requires: xprop
