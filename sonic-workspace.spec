@@ -292,13 +292,8 @@ components used by Plasma Workspace and the SDDM Breeze theme
 
 %prep
 %autosetup -n sonic-workspace-Plasma-6.5
-
-# Create a directory inside the build tree for vendored DBus XMLs
-mkdir -p _OMV_rpm_build/dbus
-
-# Install the vendored XML from ABF filestore
-install -m 0644 %{SOURCE1} \
-  _OMV_rpm_build/dbus/org.kde.kwin.VirtualKeyboard.xml
+# Install the DBus XML where CMake expects it
+install -Dm644 %{SOURCE1} src/dbus/org.kde.KWin.VirtualDesktopManager.xml
 
 %install -a
 
