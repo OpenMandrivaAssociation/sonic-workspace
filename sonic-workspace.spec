@@ -166,9 +166,17 @@ Requires: accountsservice
 Recommends: kf6-kimageformats
 Provides: virtual-notification-daemon
 Requires: iso-codes
-
-# No backend subpackages in Sonic-Workspace
-
+# D-Bus service required by kcm_users.so -- make sure you
+# move this dependency if you split out kcm_users at some point
+Requires: accountsservice
+Recommends: kf6-kimageformats
+Provides: virtual-notification-daemon
+%ifarch %{armx}
+Requires: %{name}-wayland = %{EVRD}
+%else
+Requires: %{name}-backend = %{EVRD}
+%endif
+Requires: iso-codes
 # Because of pam file
 Conflicts: kdm < 2:4.11.22-1.1
 Conflicts: kio-extras < 15.08.0
