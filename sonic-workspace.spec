@@ -174,7 +174,7 @@ Provides: virtual-notification-daemon
 %ifarch %{armx}
 Requires: %{name}-wayland = %{EVRD}
 %else
-Requires: %{name}-backend = %{EVRD}
+Requires: %{name}-x11 = %{EVRD}
 %endif
 Requires: iso-codes
 # Because of pam file
@@ -228,7 +228,7 @@ Development files for the KDE Plasma workspace.
 %package x11
 Summary: X11 support for Sonic Desktop Workspace
 Group: Graphical desktop/KDE
-Provides: %{name}-backend = %{EVRD}
+Provides: %{name}-11 = %{EVRD}
 # needed if anything will fail on startkde
 Requires: xmessage
 Requires: xprop
