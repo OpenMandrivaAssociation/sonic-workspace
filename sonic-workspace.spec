@@ -181,10 +181,6 @@ Obsoletes: %{mklibname notificationmanager} = 5.240.0
 Requires: lib64openexrcore
 Requires: lib64openjph
 
-# HEVC/H.265 encoder/decoder
-Requires: kvazaar
-Requires: lib64kvazaar
-
 # Renamed 2025-05-02 after 6.0
 %rename plasma6-workspace
 BuildSystem: cmake
