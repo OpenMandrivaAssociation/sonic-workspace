@@ -22,8 +22,6 @@ Group: System/Libraries
 
 # Use Sonic-DE GitHub branch archive as source (requested)
 Source0: https://github.com/Sonic-DE/sonic-workspace/archive/refs/heads/%{gitbranch}.tar.gz#/sonic-workspace-%{version}.tar.gz
-Source1: org.kde.KWin.VirtualDesktopManager.xml
-# SHA1: 38d927c7e55317bd2eebca961eaa5daf178270df
 Summary: Various components needed to run a Plasma-based environment. Including fixes and improvements for X11 sessions.
 Obsoletes: simplesystray < %{EVRD}
 BuildRequires: cmake(Breeze)
@@ -292,8 +290,6 @@ components used by Plasma Workspace and the SDDM Breeze theme
 
 %prep
 %autosetup -n sonic-workspace-Plasma-6.5
-# Install the DBus XML where CMake expects it
-install -Dm644 %{SOURCE1} src/dbus/org.kde.KWin.VirtualDesktopManager.xml
 
 %install -a
 
