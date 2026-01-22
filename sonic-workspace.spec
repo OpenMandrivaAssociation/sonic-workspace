@@ -290,8 +290,6 @@ components used by Plasma Workspace and the SDDM Breeze theme
 
 %prep
 %autosetup -n sonic-workspace-Plasma-6.5
-# Fix VirtualKeyboard XML path
-sed -i 's|/usr/share/dbus-1/interfaces/org\.kde\.kwin\.VirtualKeyboard\.xml|${CMAKE_SOURCE_DIR}/src/dbus/org.kde.kwin.VirtualKeyboard.xml|' components/keyboardlayout/CMakeLists.txt
 
 %install -a
 
