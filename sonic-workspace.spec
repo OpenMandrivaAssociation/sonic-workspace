@@ -15,7 +15,7 @@
 
 Name: sonic-workspace
 Version: 6.5.5
-Release: %{?git:0.%{git}.}1
+Release: %{?git:0.%{git}.}3
 URL: https://github.com/Sonic-DE/sonic-workspace
 License: GPL
 Group: System/Libraries
