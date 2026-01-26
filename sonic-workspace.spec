@@ -244,7 +244,7 @@ Requires: libkscreen-x11
 Summary: Klipper library from Sonic Workspace
 Group: System/Libraries
 
-%description -n lib64klipper6-sonic
+%description -n %{_lib}klipper6-sonic
 The Klipper shared library used by Sonic Workspace and related components.
 %files -n %{_lib}klipper6-sonic
 %{_libdir}/libklipper.so.6*
