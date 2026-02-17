@@ -1,28 +1,24 @@
-%define devname %mklibname -d %{name}-sonic
+%define devname %mklibname -d %{name}
 %define plasmaver %(echo %{version} |cut -d. -f1-3)
 %define stable %([ "$(echo %{version} |cut -d. -f2)" -ge 80 -o "$(echo %{version} |cut -d. -f3)" -ge 80 ] && echo -n un; echo -n stable)
 #define git 20240222
-%define gitbranch Plasma/6.5
+%define gitbranch Plasma/6.6
 %define gitbranchd %(echo %{gitbranch} |sed -e "s,/,-,g")
-
-# filter qml/plugins provides
-%global __provides_exclude_from ^(/usr/lib(64)?/qt6/(qml|plugins)/.*\.so)$
-%global __provides_exclude_from ^/usr/share/locale/.*\.mo$
-# Prevent auto-generated znver1 HEIF dependencies
-%global __requires_exclude ^lib(heif|de265).*
 
 %define libname %mklibname kworkspace6-sonic
 %define libklipper %mklibname klipper-sonic
 
 Name: sonic-workspace
-Version: 6.5.5
-Release: %{?git:0.%{git}.}4
+Version: 6.6.0.1
+Release: %{?git:0.%{git}.}1
 URL: https://github.com/Sonic-DE/sonic-workspace
 License: GPL
 Group: System/Libraries
 
 # Use Sonic-DE GitHub branch archive as source (requested)
 Source0: https://github.com/Sonic-DE/sonic-workspace/archive/refs/heads/%{gitbranch}.tar.gz#/sonic-workspace-%{version}.tar.gz
+Source1: kde.pam
+
 Summary: Various components needed to run a Plasma-based environment. Including fixes and improvements for X11 sessions.
 Obsoletes: simplesystray < %{EVRD}
 BuildRequires: cmake(Breeze)
@@ -145,8 +141,8 @@ BuildRequires: gettext
 # Both Plasma 5 and Plasma 6 provide
 # cmake(KPipeWire), cmake(KSysGuard) and friends
 BuildRequires: cmake(KPipeWire) >= 5.27.80
-BuildRequires: kwin-devel
-BuildRequires: cmake(KWinDBusInterface) >= 5.27.80
+BuildRequires: sonic-win-devel
+BuildRequires: cmake(KWinX11DBusInterface) >= 5.27.80
 BuildRequires: cmake(KSysGuard) >= 5.27.80
 BuildRequires: xdotool
 # needed for backgrounds and patch 2
@@ -192,6 +188,8 @@ Requires: %mklibname openjph
 # Make sure we have sonic's libklipper instead of Plasma's
 Requires: %{libklipper} = %{EVRD}
 
+Conflicts:   plasma-workspace
+
 BuildSystem: cmake
 BuildOption: -DBUILD_QCH:BOOL=ON
 BuildOption: -DKDE_INSTALL_USE_QT_SYS_PATHS:BOOL=ON
@@ -202,6 +200,11 @@ BuildOption: -DPLASMA_SYSTEMD_BOOT:BOOL=ON
 BuildOption: -DBUILD_TESTING:BOOL=OFF
 BuildOption: -DKDE_SKIP_TEST_SETTINGS:BOOL=ON
 BuildOption: -DKDE_SKIP_TESTS:BOOL=ON
+
+%patchlist
+sonic-workspace-set-QT_QPA_PLATFORM.patch
+sonic-workspace-wayland-egl-is-wayland.patch
+sonic-workspace-fix-kwinx11dbus.patch
 
 %description
 The Sonic Desktop workspace.
@@ -220,6 +223,7 @@ Summary: Development files for the KDE Plasma workspace
 Group: Development/KDE and Qt
 Requires: %{name} = %{EVRD}
 Requires: %{libname} = %{EVRD}
+Conflicts:  plasma6-workspace-devel
 
 %description -n %{devname}
 Development files for the KDE Plasma workspace.
@@ -237,11 +241,14 @@ Requires: iso-codes
 Requires: sonic-win
 Requires: kf6-kidletime-x11
 Requires: libkscreen-x11
+Conflicts:  plasma-workspace-x11
+
+%description x11
+X11 support for Plasma Workspace.
 
 %package -n %{libklipper}
 Summary: Klipper library from Sonic Workspace
 Group: System/Libraries
-Conflicts: %mklibname klipper
 
 %description -n %{libklipper}
 The Klipper shared library used by Sonic Workspace and related components.
@@ -249,12 +256,9 @@ The Klipper shared library used by Sonic Workspace and related components.
 %files -n %{libklipper}
 %{_libdir}/libklipper.so.6*
 
-%description x11
-X11 support for Plasma Workspace.
-
 %package -n sonic-qml-org.kde.breeze.components
 Summary: The org.kde.breeze.components QML component
-Group: Graphical desktop/KDE
+Group: Graphical desktop/SonicDE
 Requires: plasma6-qqc2-breeze-style
 
 %description -n sonic-qml-org.kde.breeze.components
@@ -263,7 +267,7 @@ components used by Plasma Workspace and the SDDM Breeze theme
 
 %package -n sonic-qml-org.kde.plasma.private.clipboard
 Summary: The org.kde.plasma.private.clipboard QML component
-Group: Graphical desktop/KDE
+Group: Graphical desktop/SonicDE
 Requires: %{libname} = %{EVRD}
 Requires: %{libklipper} = %{EVRD}
 
@@ -273,7 +277,7 @@ components used by Plasma Workspace and the SDDM Breeze theme
 
 %package -n sonic-qml-org.kde.plasma.private.sessions
 Summary: The org.kde.plasma.private.sessions QML component
-Group: Graphical desktop/KDE
+Group: Graphical desktop/SonicDE
 Requires: %{libname} = %{EVRD}
 
 %description -n sonic-qml-org.kde.plasma.private.sessions
@@ -282,17 +286,24 @@ components used by Plasma Workspace and the SDDM Breeze theme
 
 %package -n sonic-qml-org.kde.plasma.workspace
 Summary: The org.kde.plasma.workspace QML component
-Group: Graphical desktop/KDE
+Group: Graphical desktop/SonicDE
 Requires: %{libname} = %{EVRD}
 
 %description -n sonic-qml-org.kde.plasma.workspace
 The org.kde.plasma.workspace QML component contains QML
 components used by Plasma Workspace and the SDDM Breeze theme
 
-%prep
-%autosetup -n sonic-workspace-Plasma-6.5
+%package wayland
+Summary: Wayland session support for Sonic Desktop Workspace
+Group: Graphical desktop/SonicDE
+Requires: %{name} = %{EVRD}
+Conflicts:  plasma-workspace-wayland
+
+%description wayland
+Wayland session support for the Sonic Desktop Workspace.
 
 %install -a
+install -Dpm 644 %{S:1} %{buildroot}%{_sysconfdir}/pam.d/kde
 
 # (tpg) fix autostart permissions
 chmod 644 %{buildroot}%{_sysconfdir}/xdg/autostart/*
@@ -307,11 +318,12 @@ rm -rf %{buildroot}%{_builddir}
 %{_bindir}/plasma-apply-lookandfeel
 %{_bindir}/plasma-apply-wallpaperimage
 %{_bindir}/plasma-shutdown
+%{_sysconfdir}/pam.d/kde
 %{_sysconfdir}/xdg/autostart/gmenudbusmenuproxy.desktop
 %{_sysconfdir}/xdg/autostart/org.kde.plasmashell.desktop
 %{_sysconfdir}/xdg/autostart/org.kde.plasma-fallback-session-restore.desktop
 %{_sysconfdir}/xdg/autostart/xembedsniproxy.desktop
-%{_sysconfdir}/xdg/taskmanagerrulesrc
+# %{_sysconfdir}/xdg/taskmanagerrulesrc
 %{_sysconfdir}/xdg/menus/plasma-applications.menu
 %{_bindir}/gmenudbusmenuproxy
 %{_bindir}/kcminit
@@ -336,9 +348,13 @@ rm -rf %{buildroot}%{_builddir}
 %{_qtdir}/plugins/kf6/kio/*.so
 %{_qtdir}/plugins/kf6/krunner/*.so
 %{_qtdir}/plugins/plasma/containmentactions
-%{_qtdir}/plugins/phonon_platform
+# %{_qtdir}/plugins/phonon_platform
 %{_qtdir}/plugins/plasma/applets/*.so
 %{_qtdir}/plugins/plasmacalendarplugins
+%{_qtdir}/qml/org/kde/plasma/clock/clockplugin.qmltypes
+%{_qtdir}/qml/org/kde/plasma/clock/kde-qmlmodule.version
+%{_qtdir}/qml/org/kde/plasma/clock/libclockplugin.so
+%{_qtdir}/qml/org/kde/plasma/clock/qmldir
 %{_qtdir}/qml/org/kde/plasma/workspace/calendar
 %{_qtdir}/qml/org/kde/plasma/workspace/dialogs
 %{_qtdir}/qml/org/kde/plasma/workspace/trianglemousefilter
@@ -346,7 +362,7 @@ rm -rf %{buildroot}%{_builddir}
 %{_qtdir}/qml/org/kde/plasma/private/digitalclock
 %{_qtdir}/qml/org/kde/plasma/private/shell
 %{_qtdir}/qml/org/kde/plasma/wallpapers
-%{_qtdir}/qml/org/kde/plasma/private/appmenu
+# %{_qtdir}/qml/org/kde/plasma/private/appmenu
 %{_qtdir}/qml/org/kde/plasma/private/holidayevents
 %{_qtdir}/qml/org/kde/plasma/private/systemtray
 %{_qtdir}/qml/org/kde/plasma/workspace/dbus
@@ -363,12 +379,6 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/solid/actions/openWithFileManager.desktop
 %{_datadir}/xdg-desktop-portal/kde-portals.conf
 %dir %{_datadir}/plasma/plasmoids
-%{_datadir}/plasma/plasmoids/org.kde.plasma.activitybar
-%{_datadir}/plasma/plasmoids/org.kde.plasma.analogclock
-%{_datadir}/plasma/plasmoids/org.kde.plasma.calendar
-%{_datadir}/plasma/plasmoids/org.kde.plasma.cameraindicator
-%{_datadir}/plasma/plasmoids/org.kde.plasma.clipboard
-%{_datadir}/plasma/plasmoids/org.kde.plasma.icon
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.cpu
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.cpucore
@@ -376,7 +386,6 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.diskusage
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.memory
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.net
-%{_datadir}/plasma/plasmoids/org.kde.plasma.appmenu
 %dir %{_datadir}/plasma/wallpapers
 %{_datadir}/plasma/wallpapers/org.kde.color
 %{_datadir}/plasma/wallpapers/org.kde.image
@@ -395,13 +404,16 @@ rm -rf %{buildroot}%{_builddir}
 %{_bindir}/lookandfeeltool
 %{_libdir}/libexec/kf6/kauth/fontinst*
 %{_datadir}/polkit-1/actions/org.kde.fontinst.policy
+%{_libdir}/libexec/ksecretprompter
 %{_libdir}/libexec/kfontprint
 %{_libdir}/libexec/plasma-changeicons
 %{_libdir}/libexec/plasma-dbus-run-session-if-needed
 %{_userunitdir}/*.service
 %{_userunitdir}/*.target
+%{_datadir}/applications/org.kde.baloorunner.desktop
 %{_datadir}/applications/org.kde.kcolorschemeeditor.desktop
 %{_datadir}/applications/org.kde.kfontview.desktop
+%{_datadir}/applications/org.kde.secretprompter.desktop
 %{_datadir}/dbus-1/system-services/org.kde.fontinst.service
 %{_datadir}/dbus-1/system.d/org.kde.fontinst.conf
 %{_datadir}/icons/hicolor/*/mimetypes/fonts-package.*
@@ -412,7 +424,6 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/konqsidebartng/virtual_folders/services/fonts.desktop
 %{_datadir}/krunner/dbusplugins/plasma-runner-baloosearch.desktop
 %{_datadir}/kglobalaccel/org.kde.krunner.desktop
-%{_datadir}/plasma/plasmoids/org.kde.plasma.manage-inputmethod
 %{_qtdir}/plugins/kf6/parts/kfontviewpart.so
 %{_datadir}/kxmlgui5/kfontviewpart/kfontviewpart.rc
 %{_bindir}/plasma-interactiveconsole
@@ -457,11 +468,9 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/polkit-1/actions/org.kde.localegenhelper.policy
 %{_qtdir}/plugins/kf6/thumbcreator/fontthumbnail.so
 %{_datadir}/zsh/site-functions/_plasmashell
-%{_qtdir}/plugins/plasma5support/dataengine
 %{_qtdir}/plugins/kf6/kfileitemaction/wallpaperfileitemaction.so
 %{_qtdir}/plugins/kf6/packagestructure/plasma_*.so
 %{_qtdir}/plugins/kf6/packagestructure/wallpaper_images.so
-%{_datadir}/plasma5support/services/*.operations
 %{_libdir}/libkmpris.so*
 %{_libdir}/qt6/qml/org/kde/plasma/private/mpris
 %{_qtdir}/plugins/plasma/kcms/systemsettings/kcm_wallpaper.so
@@ -493,7 +502,6 @@ rm -rf %{buildroot}%{_builddir}
 %{_qtdir}/plugins/plasma/kcms/systemsettings/kcm_componentchooser.so
 %{_datadir}/applications/kcm_componentchooser.desktop
 %{_datadir}/kconf_update/plasma6.4-migrate-fullscreen-notifications-to-dnd.upd
-%{_datadir}/plasma/plasmoids/org.kde.plasma.systemtray
 %{_datadir}/timezonefiles/timezones.json
 %{_libdir}/kconf_update_bin/plasmashell-6.5-remove-stop-activity-shortcut
 %{_qtdir}/plugins/plasma/kcms/systemsettings/kcm_nighttime.so
@@ -529,18 +537,10 @@ rm -rf %{buildroot}%{_builddir}
 %{_bindir}/startplasma-x11
 %{_datadir}/xsessions/plasmax11.desktop
 
-%package wayland
-Summary: Wayland session support for Sonic Desktop Workspace
-Group: Graphical desktop/KDE
-Requires: %{name} = %{EVRD}
-
-%description wayland
-Wayland session support for the Sonic Desktop Workspace.
-
 %files wayland
 # Plasma Wayland session
-/usr/bin/startplasma-wayland
-/usr/share/wayland-sessions/plasma.desktop
+%{_bindir}/startplasma-wayland
+%{_datadir}/wayland-sessions/plasma.desktop
 %config(noreplace) /etc/sddm.conf.d/plasma-wayland.conf
 
 %files -n %{devname}
