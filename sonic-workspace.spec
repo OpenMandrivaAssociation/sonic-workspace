@@ -1,8 +1,8 @@
-%define devname %mklibname -d %{name}-sonic
+%define devname %mklibname -d %{name}
 %define plasmaver %(echo %{version} |cut -d. -f1-3)
 %define stable %([ "$(echo %{version} |cut -d. -f2)" -ge 80 -o "$(echo %{version} |cut -d. -f3)" -ge 80 ] && echo -n un; echo -n stable)
 #define git 20240222
-%define gitbranch Plasma/6.5
+%define gitbranch Plasma/6.6
 %define gitbranchd %(echo %{gitbranch} |sed -e "s,/,-,g")
 
 # filter qml/plugins provides
@@ -15,14 +15,16 @@
 %define libklipper %mklibname klipper-sonic
 
 Name: sonic-workspace
-Version: 6.5.5
-Release: %{?git:0.%{git}.}4
+Version: 6.6.0
+Release: %{?git:0.%{git}.}1
 URL: https://github.com/Sonic-DE/sonic-workspace
 License: GPL
 Group: System/Libraries
 
 # Use Sonic-DE GitHub branch archive as source (requested)
 Source0: https://github.com/Sonic-DE/sonic-workspace/archive/refs/heads/%{gitbranch}.tar.gz#/sonic-workspace-%{version}.tar.gz
+Source1: sonic.pam
+
 Summary: Various components needed to run a Plasma-based environment. Including fixes and improvements for X11 sessions.
 Obsoletes: simplesystray < %{EVRD}
 BuildRequires: cmake(Breeze)
@@ -203,6 +205,10 @@ BuildOption: -DBUILD_TESTING:BOOL=OFF
 BuildOption: -DKDE_SKIP_TEST_SETTINGS:BOOL=ON
 BuildOption: -DKDE_SKIP_TESTS:BOOL=ON
 
+%patchlist
+sonic-workspace-set-QT_QPA_PLATFORM.patch
+# plasma-workspace-wayland-egl-is-wayland.patch
+
 %description
 The Sonic Desktop workspace.
 
@@ -289,10 +295,8 @@ Requires: %{libname} = %{EVRD}
 The org.kde.plasma.workspace QML component contains QML
 components used by Plasma Workspace and the SDDM Breeze theme
 
-%prep
-%autosetup -n sonic-workspace-Plasma-6.5
-
 %install -a
+install -Dpm 644 %{S:1} %{buildroot}%{_sysconfdir}/pam.d/sonic
 
 # (tpg) fix autostart permissions
 chmod 644 %{buildroot}%{_sysconfdir}/xdg/autostart/*
@@ -307,11 +311,12 @@ rm -rf %{buildroot}%{_builddir}
 %{_bindir}/plasma-apply-lookandfeel
 %{_bindir}/plasma-apply-wallpaperimage
 %{_bindir}/plasma-shutdown
+%{_sysconfdir}/pam.d/sonic
 %{_sysconfdir}/xdg/autostart/gmenudbusmenuproxy.desktop
 %{_sysconfdir}/xdg/autostart/org.kde.plasmashell.desktop
 %{_sysconfdir}/xdg/autostart/org.kde.plasma-fallback-session-restore.desktop
 %{_sysconfdir}/xdg/autostart/xembedsniproxy.desktop
-%{_sysconfdir}/xdg/taskmanagerrulesrc
+# %{_sysconfdir}/xdg/taskmanagerrulesrc
 %{_sysconfdir}/xdg/menus/plasma-applications.menu
 %{_bindir}/gmenudbusmenuproxy
 %{_bindir}/kcminit
@@ -336,9 +341,13 @@ rm -rf %{buildroot}%{_builddir}
 %{_qtdir}/plugins/kf6/kio/*.so
 %{_qtdir}/plugins/kf6/krunner/*.so
 %{_qtdir}/plugins/plasma/containmentactions
-%{_qtdir}/plugins/phonon_platform
+# %{_qtdir}/plugins/phonon_platform
 %{_qtdir}/plugins/plasma/applets/*.so
 %{_qtdir}/plugins/plasmacalendarplugins
+%{_qtdir}/qml/org/kde/plasma/clock/clockplugin.qmltypes
+%{_qtdir}/qml/org/kde/plasma/clock/kde-qmlmodule.version
+%{_qtdir}/qml/org/kde/plasma/clock/libclockplugin.so
+%{_qtdir}/qml/org/kde/plasma/clock/qmldir
 %{_qtdir}/qml/org/kde/plasma/workspace/calendar
 %{_qtdir}/qml/org/kde/plasma/workspace/dialogs
 %{_qtdir}/qml/org/kde/plasma/workspace/trianglemousefilter
@@ -346,7 +355,7 @@ rm -rf %{buildroot}%{_builddir}
 %{_qtdir}/qml/org/kde/plasma/private/digitalclock
 %{_qtdir}/qml/org/kde/plasma/private/shell
 %{_qtdir}/qml/org/kde/plasma/wallpapers
-%{_qtdir}/qml/org/kde/plasma/private/appmenu
+# %{_qtdir}/qml/org/kde/plasma/private/appmenu
 %{_qtdir}/qml/org/kde/plasma/private/holidayevents
 %{_qtdir}/qml/org/kde/plasma/private/systemtray
 %{_qtdir}/qml/org/kde/plasma/workspace/dbus
@@ -363,12 +372,12 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/solid/actions/openWithFileManager.desktop
 %{_datadir}/xdg-desktop-portal/kde-portals.conf
 %dir %{_datadir}/plasma/plasmoids
-%{_datadir}/plasma/plasmoids/org.kde.plasma.activitybar
-%{_datadir}/plasma/plasmoids/org.kde.plasma.analogclock
-%{_datadir}/plasma/plasmoids/org.kde.plasma.calendar
-%{_datadir}/plasma/plasmoids/org.kde.plasma.cameraindicator
-%{_datadir}/plasma/plasmoids/org.kde.plasma.clipboard
-%{_datadir}/plasma/plasmoids/org.kde.plasma.icon
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.activitybar
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.analogclock
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.calendar
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.cameraindicator
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.clipboard
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.icon
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.cpu
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.cpucore
@@ -376,7 +385,7 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.diskusage
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.memory
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.net
-%{_datadir}/plasma/plasmoids/org.kde.plasma.appmenu
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.appmenu
 %dir %{_datadir}/plasma/wallpapers
 %{_datadir}/plasma/wallpapers/org.kde.color
 %{_datadir}/plasma/wallpapers/org.kde.image
@@ -395,13 +404,16 @@ rm -rf %{buildroot}%{_builddir}
 %{_bindir}/lookandfeeltool
 %{_libdir}/libexec/kf6/kauth/fontinst*
 %{_datadir}/polkit-1/actions/org.kde.fontinst.policy
+%{_libdir}/libexec/ksecretprompter
 %{_libdir}/libexec/kfontprint
 %{_libdir}/libexec/plasma-changeicons
 %{_libdir}/libexec/plasma-dbus-run-session-if-needed
 %{_userunitdir}/*.service
 %{_userunitdir}/*.target
+%{_datadir}/applications/org.kde.baloorunner.desktop
 %{_datadir}/applications/org.kde.kcolorschemeeditor.desktop
 %{_datadir}/applications/org.kde.kfontview.desktop
+%{_datadir}/applications/org.kde.secretprompter.desktop
 %{_datadir}/dbus-1/system-services/org.kde.fontinst.service
 %{_datadir}/dbus-1/system.d/org.kde.fontinst.conf
 %{_datadir}/icons/hicolor/*/mimetypes/fonts-package.*
@@ -412,7 +424,7 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/konqsidebartng/virtual_folders/services/fonts.desktop
 %{_datadir}/krunner/dbusplugins/plasma-runner-baloosearch.desktop
 %{_datadir}/kglobalaccel/org.kde.krunner.desktop
-%{_datadir}/plasma/plasmoids/org.kde.plasma.manage-inputmethod
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.manage-inputmethod
 %{_qtdir}/plugins/kf6/parts/kfontviewpart.so
 %{_datadir}/kxmlgui5/kfontviewpart/kfontviewpart.rc
 %{_bindir}/plasma-interactiveconsole
@@ -457,11 +469,11 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/polkit-1/actions/org.kde.localegenhelper.policy
 %{_qtdir}/plugins/kf6/thumbcreator/fontthumbnail.so
 %{_datadir}/zsh/site-functions/_plasmashell
-%{_qtdir}/plugins/plasma5support/dataengine
+# %{_qtdir}/plugins/plasma5support/dataengine
 %{_qtdir}/plugins/kf6/kfileitemaction/wallpaperfileitemaction.so
 %{_qtdir}/plugins/kf6/packagestructure/plasma_*.so
 %{_qtdir}/plugins/kf6/packagestructure/wallpaper_images.so
-%{_datadir}/plasma5support/services/*.operations
+# %{_datadir}/plasma5support/services/*.operations
 %{_libdir}/libkmpris.so*
 %{_libdir}/qt6/qml/org/kde/plasma/private/mpris
 %{_qtdir}/plugins/plasma/kcms/systemsettings/kcm_wallpaper.so
@@ -493,7 +505,7 @@ rm -rf %{buildroot}%{_builddir}
 %{_qtdir}/plugins/plasma/kcms/systemsettings/kcm_componentchooser.so
 %{_datadir}/applications/kcm_componentchooser.desktop
 %{_datadir}/kconf_update/plasma6.4-migrate-fullscreen-notifications-to-dnd.upd
-%{_datadir}/plasma/plasmoids/org.kde.plasma.systemtray
+# %{_datadir}/plasma/plasmoids/org.kde.plasma.systemtray
 %{_datadir}/timezonefiles/timezones.json
 %{_libdir}/kconf_update_bin/plasmashell-6.5-remove-stop-activity-shortcut
 %{_qtdir}/plugins/plasma/kcms/systemsettings/kcm_nighttime.so
