@@ -9,7 +9,7 @@
 %define libklipper %mklibname klipper-sonic
 
 Name: sonic-workspace
-Version: 6.6.0.1
+Version: 6.6.1
 Release: %{?git:0.%{git}.}1
 URL: https://github.com/Sonic-DE/sonic-workspace
 License: GPL
@@ -204,7 +204,7 @@ BuildOption: -DKDE_SKIP_TESTS:BOOL=ON
 %patchlist
 sonic-workspace-set-QT_QPA_PLATFORM.patch
 sonic-workspace-wayland-egl-is-wayland.patch
-sonic-workspace-fix-kwinx11dbus.patch
+# sonic-workspace-fix-kwinx11dbus.patch
 
 %description
 The Sonic Desktop workspace.
