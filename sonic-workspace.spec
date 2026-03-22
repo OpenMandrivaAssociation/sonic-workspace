@@ -9,14 +9,14 @@
 %define libklipper %mklibname klipper-sonic
 
 Name: sonic-workspace
-Version: 6.6.2
+Version: 6.6.3
 Release: %{?git:0.%{git}.}1
 URL: https://github.com/Sonic-DE/sonic-workspace
 License: GPL
 Group: System/Libraries
 
 # Use Sonic-DE GitHub branch archive as source (requested)
-Source0: https://github.com/Sonic-DE/sonic-workspace/archive/refs/heads/%{gitbranch}.tar.gz#/sonic-workspace-%{version}.tar.gz
+Source0: %url/archive/refs/tags/%{version}.tar.gz#/sonic-workspace-%{version}.tar.gz
 Source1: kde.pam
 
 Summary: Various components needed to run a Plasma-based environment. Including fixes and improvements for X11 sessions.
@@ -37,8 +37,6 @@ BuildRequires: cmake(KF6DBusAddons)
 BuildRequires: cmake(KF6Declarative)
 BuildRequires: cmake(KF6XmlGui)
 BuildRequires: cmake(KF6FileMetaData)
-BuildRequires: cmake(Wayland) >= 5.90.0
-BuildRequires: cmake(KWayland) >= 5.90.0
 BuildRequires: cmake(KF6NetworkManagerQt)
 BuildRequires: cmake(KF6TextWidgets)
 BuildRequires: pkgconfig(libnm) >= 1.4.0
@@ -50,8 +48,12 @@ BuildRequires: cmake(Gettext)
 BuildRequires: cmake(ECM)
 BuildRequires: cmake(KF6KIO)
 BuildRequires: cmake(KF6Declarative)
-BuildRequires: cmake(Plasma) >= 5.90.0
-BuildRequires: cmake(PlasmaQuick) >= 5.90.0
+
+# pending rename
+# BuildRequires: cmake(Plasma) >= 5.90.0
+# BuildRequires: cmake(PlasmaQuick) >= 5.90.0
+BuildRequires: %{_lib}SonicDE-devel
+
 BuildRequires: cmake(KF6Config)
 BuildRequires: cmake(KF6Prison)
 BuildRequires: cmake(Phonon4Qt6)
@@ -61,10 +63,18 @@ BuildRequires: cmake(KF6Su)
 BuildRequires: cmake(KF6NewStuff)
 BuildRequires: cmake(KF6KCMUtils)
 BuildRequires: cmake(KF6IdleTime)
-BuildRequires: cmake(KF6Screen)
+
+# pending rename
+#BuildRequires: cmake(KF6Screen)
+BuildRequires: %{_lib}SonicDEScreen-devel
+
 BuildRequires: cmake(KF6Baloo)
 BuildRequires: cmake(KF6Prison)
-BuildRequires: cmake(KScreenLocker)
+
+# pending rename
+#BuildRequires: cmake(KScreenLocker)
+BuildRequires: sonic-screenlocker-devel
+
 BuildRequires: cmake(KF6Holidays)
 BuildRequires: cmake(KF6Kirigami2)
 BuildRequires: cmake(KF6QuickCharts)
@@ -78,12 +88,8 @@ BuildRequires: cmake(VulkanHeaders)
 BuildRequires: %mklibname -d KF6IconWidgets
 BuildRequires: cmake(KF6KirigamiAddons)
 BuildRequires: cmake(KF6UserFeedback)
-BuildRequires: cmake(PlasmaWaylandProtocols)
-BuildRequires: cmake(Qt6WaylandClient)
-BuildRequires: cmake(Qt6WaylandCompositor)
 BuildRequires: cmake(Qt6Positioning)
 BuildRequires: cmake(LayerShellQt)
-BuildRequires: cmake(WaylandProtocols)
 BuildRequires: pkgconfig(xkbcommon)
 BuildRequires: pkgconfig(dbusmenu-qt6)
 BuildRequires: pkgconfig(dbus-1)
@@ -112,11 +118,6 @@ BuildRequires: cmake(Qt6Core5Compat)
 BuildRequires: cmake(Qt6ShaderTools)
 BuildRequires: cmake(QCoro6)
 BuildRequires: pkgconfig(libcanberra)
-BuildRequires: pkgconfig(wayland-client)
-BuildRequires: pkgconfig(wayland-scanner)
-BuildRequires: pkgconfig(wayland-server)
-BuildRequires: pkgconfig(wayland-egl)
-BuildRequires: pkgconfig(wayland-protocols) >= 1.24
 BuildRequires: pkgconfig(x11)
 BuildRequires: pkgconfig(xcb)
 BuildRequires: pkgconfig(xcb-keysyms)
@@ -143,7 +144,11 @@ BuildRequires: gettext
 BuildRequires: cmake(KPipeWire) >= 5.27.80
 BuildRequires: sonic-win-devel
 BuildRequires: cmake(KWinX11DBusInterface) >= 5.27.80
-BuildRequires: cmake(KSysGuard) >= 5.27.80
+
+# pending rename
+# BuildRequires: cmake(KSysGuard) >= 5.27.80
+BuildRequires: %{_lib}SonicDELibksysguard-devel
+
 BuildRequires: xdotool
 # needed for backgrounds and patch 2
 Requires: distro-release-theme
@@ -168,11 +173,7 @@ Requires: iso-codes
 Requires: accountsservice
 Recommends: kf6-kimageformats
 Provides: virtual-notification-daemon
-%ifarch %{armx}
-Requires: %{name}-wayland = %{EVRD}
-%else
-Requires: %{name}-x11 = %{EVRD}
-%endif
+
 Requires: iso-codes
 # Because of pam file
 Conflicts: kdm < 2:4.11.22-1.1
@@ -188,7 +189,15 @@ Requires: %mklibname openjph
 # Make sure we have sonic's libklipper instead of Plasma's
 Requires: %{libklipper} = %{EVRD}
 
-Conflicts:   plasma-workspace
+Conflicts:   plasma-workspace-x11
+Requires: xmessage
+Requires: xprop
+Requires: xset
+Requires: xrdb
+Requires: iso-codes
+Requires: sonic-win
+Requires: kf6-kidletime-x11
+Requires: sonic-screen
 
 BuildSystem: cmake
 BuildOption: -DBUILD_QCH:BOOL=ON
@@ -202,9 +211,7 @@ BuildOption: -DKDE_SKIP_TEST_SETTINGS:BOOL=ON
 BuildOption: -DKDE_SKIP_TESTS:BOOL=ON
 
 %patchlist
-sonic-workspace-set-QT_QPA_PLATFORM.patch
-sonic-workspace-wayland-egl-is-wayland.patch
-# sonic-workspace-fix-kwinx11dbus.patch
+
 
 %description
 The Sonic Desktop workspace.
@@ -220,31 +227,13 @@ The Plasma 6 workspace library
 
 %package -n %{devname}
 Summary: Development files for the KDE Plasma workspace
-Group: Development/KDE and Qt
+Group: Development/SonicDE and Qt
 Requires: %{name} = %{EVRD}
 Requires: %{libname} = %{EVRD}
-Conflicts:  plasma6-workspace-devel
+Conflicts:  plasma-workspace-devel
 
 %description -n %{devname}
 Development files for the KDE Plasma workspace.
-
-%package x11
-Summary: X11 support for Sonic Desktop Workspace
-Group: Graphical desktop/KDE
-Provides: %{name}-x11 = %{EVRD}
-# needed if anything will fail on startkde
-Requires: xmessage
-Requires: xprop
-Requires: xset
-Requires: xrdb
-Requires: iso-codes
-Requires: sonic-win
-Requires: kf6-kidletime-x11
-Requires: libkscreen-x11
-Conflicts:  plasma-workspace-x11
-
-%description x11
-X11 support for Plasma Workspace.
 
 %package -n %{libklipper}
 Summary: Klipper library from Sonic Workspace
@@ -292,15 +281,6 @@ Requires: %{libname} = %{EVRD}
 %description -n sonic-qml-org.kde.plasma.workspace
 The org.kde.plasma.workspace QML component contains QML
 components used by Plasma Workspace and the SDDM Breeze theme
-
-%package wayland
-Summary: Wayland session support for Sonic Desktop Workspace
-Group: Graphical desktop/SonicDE
-Requires: %{name} = %{EVRD}
-Conflicts:  plasma-workspace-wayland
-
-%description wayland
-Wayland session support for the Sonic Desktop Workspace.
 
 %install -a
 install -Dpm 644 %{S:1} %{buildroot}%{_sysconfdir}/pam.d/kde
@@ -508,6 +488,9 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/applications/kcm_nighttime.desktop
 %{_datadir}/applications/org.kde.plasma-interactiveconsole.desktop
 %{_datadir}/kconf_update/plasmashell-6.5-remove-stop-activity-shortcut.upd
+%{_bindir}/startplasma-x11
+%{_datadir}/xsessions/plasmax11.desktop
+%{_datadir}/wayland-sessions/plasma.desktop
 
 %files -n %{libname}
 %{_libdir}/libklookandfeel.so.*
@@ -532,16 +515,6 @@ rm -rf %{buildroot}%{_builddir}
 
 %files -n sonic-qml-org.kde.plasma.private.sessions
 %{_qtdir}/qml/org/kde/plasma/private/sessions
-
-%files x11
-%{_bindir}/startplasma-x11
-%{_datadir}/xsessions/plasmax11.desktop
-
-%files wayland
-# Plasma Wayland session
-%{_bindir}/startplasma-wayland
-%{_datadir}/wayland-sessions/plasma.desktop
-%config(noreplace) /etc/sddm.conf.d/plasma-wayland.conf
 
 %files -n %{devname}
 %{_includedir}/*
