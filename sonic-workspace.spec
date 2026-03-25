@@ -10,7 +10,7 @@
 
 Name: sonic-workspace
 Version: 6.6.3
-Release: %{?git:0.%{git}.}1
+Release: %{?git:0.%{git}.}2
 URL: https://github.com/Sonic-DE/sonic-workspace
 License: GPL
 Group: System/Libraries
@@ -29,7 +29,11 @@ BuildRequires: cmake(KF6Solid)
 BuildRequires: cmake(KF6Parts)
 BuildRequires: cmake(PlasmaActivities)
 BuildRequires: cmake(PlasmaActivitiesStats)
-BuildRequires: cmake(KF6Auth)
+
+# pending rename
+# BuildRequires: cmake(KF6Auth)
+BuildRequires: %{_lib}SonicFrameworksAuth-devel
+
 BuildRequires: cmake(KF6Notifications)
 BuildRequires: cmake(KF6ItemModels)
 BuildRequires: cmake(KF6TextEditor)
@@ -46,7 +50,11 @@ BuildRequires: cmake(KF6People)
 BuildRequires: cmake(KF6KDED)
 BuildRequires: cmake(Gettext)
 BuildRequires: cmake(ECM)
-BuildRequires: cmake(KF6KIO)
+
+# pending rename
+# BuildRequires: cmake(KF6KIO)
+BuildRequires: %{_lib}SonicFrameworksIO-devel
+
 BuildRequires: cmake(KF6Declarative)
 
 # pending rename
@@ -178,18 +186,14 @@ Requires: iso-codes
 # Because of pam file
 Conflicts: kdm < 2:4.11.22-1.1
 Conflicts: kio-extras < 15.08.0
-Obsoletes: %{mklibname plasma-geolocation-interface} = 5.240.0
-Obsoletes: %{mklibname colorcorrect} = 5.240.0
-Obsoletes: %{mklibname weather_ion} = 5.240.0
-Obsoletes: %{mklibname taskmanager} = 5.240.0
-Obsoletes: %{mklibname notificationmanager} = 5.240.0
+
 # Image/codec stack required by KImageFormats, Baloo, and Plasma
 Requires: %mklibname openexrcore
 Requires: %mklibname openjph
 # Make sure we have sonic's libklipper instead of Plasma's
 Requires: %{libklipper} = %{EVRD}
 
-Conflicts:   plasma-workspace-x11
+Conflicts: plasma-workspace-x11
 Requires: xmessage
 Requires: xprop
 Requires: xset
@@ -219,21 +223,21 @@ The Sonic Desktop workspace.
 # Split out because it's used by both plasma-workspace
 # and sddm-theme-breeze
 %package -n %{libname}
-Summary: The Plasma 6 workspace library
+Summary: The SonicDE workspace library
 Group: System/Libraries
 
 %description -n %{libname}
-The Plasma 6 workspace library
+%summary
 
 %package -n %{devname}
-Summary: Development files for the KDE Plasma workspace
+Summary: Development files for the SonicDE workspace
 Group: Development/SonicDE and Qt
 Requires: %{name} = %{EVRD}
 Requires: %{libname} = %{EVRD}
 Conflicts:  plasma-workspace-devel
 
 %description -n %{devname}
-Development files for the KDE Plasma workspace.
+%summary
 
 %package -n %{libklipper}
 Summary: Klipper library from Sonic Workspace
@@ -252,7 +256,7 @@ Requires: plasma6-qqc2-breeze-style
 
 %description -n sonic-qml-org.kde.breeze.components
 The org.kde.breeze.components QML component contains QML
-components used by Plasma Workspace and the SDDM Breeze theme
+components used by SonicDE Workspace and the SDDM Breeze theme
 
 %package -n sonic-qml-org.kde.plasma.private.clipboard
 Summary: The org.kde.plasma.private.clipboard QML component
@@ -262,7 +266,7 @@ Requires: %{libklipper} = %{EVRD}
 
 %description -n sonic-qml-org.kde.plasma.private.clipboard
 The org.kde.plasma.private.clipboard QML component contains QML
-components used by Plasma Workspace and the SDDM Breeze theme
+components used by SonicDE Workspace and the SDDM Breeze theme
 
 %package -n sonic-qml-org.kde.plasma.private.sessions
 Summary: The org.kde.plasma.private.sessions QML component
@@ -271,7 +275,7 @@ Requires: %{libname} = %{EVRD}
 
 %description -n sonic-qml-org.kde.plasma.private.sessions
 The org.kde.plasma.private.sessions QML component contains QML
-components used by Plasma Workspace and the SDDM Breeze theme
+components used by SonicDE Workspace and the SDDM Breeze theme
 
 %package -n sonic-qml-org.kde.plasma.workspace
 Summary: The org.kde.plasma.workspace QML component
@@ -280,7 +284,7 @@ Requires: %{libname} = %{EVRD}
 
 %description -n sonic-qml-org.kde.plasma.workspace
 The org.kde.plasma.workspace QML component contains QML
-components used by Plasma Workspace and the SDDM Breeze theme
+components used by SonicDE Workspace and the SDDM Breeze theme
 
 %install -a
 install -Dpm 644 %{S:1} %{buildroot}%{_sysconfdir}/pam.d/kde
