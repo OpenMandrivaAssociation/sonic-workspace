@@ -23,7 +23,11 @@ Summary: Various components needed to run a Plasma-based environment. Including 
 Obsoletes: simplesystray < %{EVRD}
 BuildRequires: cmake(Breeze)
 BuildRequires: cmake(KF6DocTools)
-BuildRequires: cmake(KF6CoreAddons)
+
+# pending rename
+# BuildRequires: cmake(KF6CoreAddons)
+BuildRequires: %{_lib}SonicFrameworksCoreAddons-devel
+
 BuildRequires: cmake(KF6Crash)
 BuildRequires: cmake(KF6Solid)
 BuildRequires: cmake(KF6Parts)
@@ -49,7 +53,11 @@ BuildRequires: cmake(KF6NetworkManagerQt)
 BuildRequires: cmake(KF6TextWidgets)
 BuildRequires: pkgconfig(libnm) >= 1.4.0
 BuildRequires: cmake(KF6Wallet)
-BuildRequires: cmake(KF6GlobalAccel)
+
+# pending rename
+# BuildRequires: cmake(KF6GlobalAccel)
+BuildRequires: %{_lib}SonicFrameworksKeybind-devel
+
 BuildRequires: cmake(KF6People)
 BuildRequires: cmake(KF6KDED)
 BuildRequires: cmake(Gettext)
@@ -69,7 +77,11 @@ BuildRequires: %{_lib}SonicDE-devel
 BuildRequires: cmake(KF6Config)
 BuildRequires: cmake(KF6Prison)
 BuildRequires: cmake(Phonon4Qt6)
-BuildRequires: cmake(KF6Runner)
+
+# pending rename
+# BuildRequires: cmake(KF6Runner)
+BuildRequires: %{_lib}SonicFrameworksRunner-devel
+
 BuildRequires: cmake(KF6NotifyConfig)
 BuildRequires: cmake(KF6Su)
 BuildRequires: cmake(KF6NewStuff)
@@ -88,7 +100,11 @@ BuildRequires: cmake(KF6Prison)
 BuildRequires: sonic-screenlocker-devel
 
 BuildRequires: cmake(KF6Holidays)
-BuildRequires: cmake(KF6Kirigami2)
+
+# pending rename 
+# BuildRequires: cmake(KF6Kirigami2)
+BuildRequires: %{_lib}SonicFrameworksQuickUI-devel
+
 BuildRequires: cmake(KF6QuickCharts)
 BuildRequires: cmake(KF6UnitConversion)
 BuildRequires: cmake(Plasma5Support)
