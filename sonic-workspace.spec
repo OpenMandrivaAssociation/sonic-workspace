@@ -9,14 +9,14 @@
 %define libklipper %mklibname klipper-sonic
 
 Name: sonic-workspace
-Version: 6.6.3
-Release: %{?git:0.%{git}.}2
+Version: 6.6.4
+Release: %{?git:0.%{git}.}1
 URL: https://github.com/Sonic-DE/sonic-workspace
 License: GPL
 Group: System/Libraries
 
 # Use Sonic-DE GitHub branch archive as source (requested)
-Source0: %url/archive/refs/tags/%{version}.tar.gz#/sonic-workspace-%{version}.tar.gz
+Source0: %url/archive/%version/%name-%version.tar.gz
 Source1: kde.pam
 
 Summary: Various components needed to run a Plasma-based environment. Including fixes and improvements for X11 sessions.
@@ -27,7 +27,11 @@ BuildRequires: cmake(KF6CoreAddons)
 BuildRequires: cmake(KF6Crash)
 BuildRequires: cmake(KF6Solid)
 BuildRequires: cmake(KF6Parts)
-BuildRequires: cmake(PlasmaActivities)
+
+# pending rename
+# BuildRequires: cmake(PlasmaActivities)
+BuildRequires: %{_lib}SonicDEActivities-devel
+
 BuildRequires: cmake(PlasmaActivitiesStats)
 
 # pending rename
