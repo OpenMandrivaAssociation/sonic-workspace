@@ -9,7 +9,7 @@
 %define libklipper %mklibname klipper-sonic
 
 Name: sonic-workspace
-Version: 6.6.4
+Version: 6.6.5
 Release: %{?git:0.%{git}.}1
 URL: https://github.com/Sonic-DE/sonic-workspace
 License: GPL
