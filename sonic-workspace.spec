@@ -156,6 +156,7 @@ BuildRequires: pkgconfig(sm)
 BuildRequires: pkgconfig(xcursor)
 BuildRequires: pkgconfig(xtst)
 BuildRequires: pkgconfig(xcb-util)
+BuildRequires: pkgconfig(xcb-icccm)
 BuildRequires: pkgconfig(xcb-image)
 BuildRequires: pam-devel
 BuildRequires: pkgconfig(iso-codes)
