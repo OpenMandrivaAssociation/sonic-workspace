@@ -383,6 +383,7 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/applications/org.kde.klipper.desktop
 %{_datadir}/solid/actions/openWithFileManager.desktop
 %{_datadir}/xdg-desktop-portal/kde-portals.conf
+%{_datadir}/xdg-desktop-portal/portals/plasmanotify.portal
 %dir %{_datadir}/plasma/plasmoids
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor
 %{_datadir}/plasma/plasmoids/org.kde.plasma.systemmonitor.cpu
@@ -495,6 +496,7 @@ rm -rf %{buildroot}%{_builddir}
 %{_datadir}/kconf_update/plasma6.3-update-clipboard-database-2-to-3.upd
 %{_libdir}/libexec/plasma-fallback-session-restore
 %{_libdir}/libexec/plasma-fallback-session-save
+%{_libdir}/libexec/plasma-startup-sound
 %{_qtdir}/plugins/plasma/kcms/systemsettings/kcm_nightlight.so
 %{_datadir}/applications/kcm_nightlight.desktop
 %{_datadir}/applications/org.kde.kfontinst.desktop
