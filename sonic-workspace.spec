@@ -310,8 +310,6 @@ components used by SonicDE Workspace and the SDDM Breeze theme
 %install -a
 install -Dpm 644 %{S:1} %{buildroot}%{_sysconfdir}/pam.d/kde
 
-rm -rf %{buildroot}/%{_libdir}/cmake
-
 # (tpg) fix autostart permissions
 chmod 644 %{buildroot}%{_sysconfdir}/xdg/autostart/*
 
@@ -546,15 +544,13 @@ rm -rf %{buildroot}%{_builddir}
 %{_includedir}/*
 %{_libdir}/lib*.so
 %exclude %{_libdir}/libkrdb.so
-
-# pending rename
-# %{_libdir}/cmake/KRunnerAppDBusInterface
-# %{_libdir}/cmake/KSMServerDBusInterface
-# %{_libdir}/cmake/LibKWorkspace
-# %{_libdir}/cmake/LibTaskManager
-# %{_libdir}/cmake/Krdb
-# %{_libdir}/cmake/LibKLookAndFeel
-# %{_libdir}/cmake/LibNotificationManager
+%{_libdir}/cmake/KRunnerAppDBusInterface
+%{_libdir}/cmake/KSMServerDBusInterface
+%{_libdir}/cmake/LibKWorkspace
+%{_libdir}/cmake/LibTaskManager
+%{_libdir}/cmake/Krdb
+%{_libdir}/cmake/LibKLookAndFeel
+%{_libdir}/cmake/LibNotificationManager
 
 %{_datadir}/dbus-1/interfaces/*.xml
 
