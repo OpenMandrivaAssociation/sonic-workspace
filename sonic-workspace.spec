@@ -362,7 +362,6 @@ rm -rf %{buildroot}%{_builddir}
 %{_qtdir}/qml/org/kde/plasma/clock/libclockplugin.so
 %{_qtdir}/qml/org/kde/plasma/clock/qmldir
 %{_qtdir}/qml/org/kde/plasma/workspace/calendar
-%{_qtdir}/qml/org/kde/plasma/workspace/dialogs
 %{_qtdir}/qml/org/kde/plasma/workspace/trianglemousefilter
 %dir %{_qtdir}/qml/org/kde/plasma/private
 %{_qtdir}/qml/org/kde/plasma/private/digitalclock
